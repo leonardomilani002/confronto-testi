@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Confronta due testi nel tuo browser. Evidenzia aggiunte e rimozioni, per parole o caratteri. Funziona anche offline.">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="color-scheme" content="light">
+  <title>Testo a testo — Confronta due testi</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d4d4b'/%3E%3Cpath d='M14 23h16m-8-8v16M37 41h14' stroke='white' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#172a35;background:#f3f6f8;font-size:16px;line-height:1.5;--ink:#172a35;--muted:#536675;--line:#d5dfe5;--accent:#0d5753;--red:#a2253c;--green:#086147;--mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace}
+    *{box-sizing:border-box}body{margin:0}button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #148782;outline-offset:4px}button{touch-action:manipulation}[hidden]{display:none!important}button svg{width:18px;height:18px;flex:none}svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .topbar{height:78px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center}.topbar-inner{max-width:1480px;padding:0 40px;width:100%;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:11px;font-size:1.1rem;font-weight:740;letter-spacing:-.03em}.brand-icon{display:grid;place-items:center;color:white;background:#0d4d4b;border-radius:9px;width:36px;height:36px;font:500 1.4rem var(--mono)}.brand-icon span{transform:translateY(-1px)}.privacy{display:flex;align-items:center;gap:8px;font-size:.875rem;color:var(--accent)}.privacy svg{width:17px;height:17px}
+    main{max-width:1480px;margin:auto;padding:34px 40px 24px}.page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:25px}h1{font-size:1.9rem;line-height:1.2;letter-spacing:-.045em;margin:0 0 8px;font-weight:710}.intro{margin:0;color:var(--muted);font-size:1rem}.utility{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding-top:2px}.btn{border:1px solid var(--line);border-radius:7px;min-height:42px;padding:9px 14px;background:white;color:var(--ink);display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:.875rem;font-weight:600;line-height:1.35;transition:background .12s,border-color .12s}.btn:hover:not(:disabled){background:#eaf0f3;border-color:#acbec9}.btn.quiet{background:transparent;border-color:transparent;color:var(--muted)}.btn.quiet:hover:not(:disabled){background:#e6edf1;border-color:transparent}.btn.primary{background:var(--accent);border-color:var(--accent);color:white;min-width:178px}.btn.primary:hover:not(:disabled){background:#08433f;border-color:#08433f}.btn.small{min-height:36px;padding:6px 10px}.btn.icon-only{width:36px;min-height:36px;padding:7px}.kbd{font:500 .75rem var(--mono);opacity:.8}
+    .settings{background:#e9eff3;border:1px solid var(--line);border-radius:9px 9px 0 0;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.settings-left{display:flex;align-items:center;gap:24px;flex-wrap:wrap}.detail{display:flex;align-items:center;gap:10px;border:0;padding:0;margin:0;min-width:0}.detail legend{float:left;font-size:.875rem;color:var(--muted);margin-right:10px;padding:6px 0}.segmented{display:flex;gap:3px;padding:3px;border:1px solid #cbd7df;border-radius:7px;background:#e0e8ee}.segmented label{position:relative;display:block}.segmented input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}.segmented span{display:block;border-radius:4px;padding:5px 12px;font-size:.875rem;line-height:1.5;color:#405462;cursor:pointer}.segmented input:checked+span{background:#fff;box-shadow:0 1px 3px #23364318;color:var(--ink);font-weight:650}.segmented input:focus-visible+span{outline:3px solid #148782;outline-offset:3px}.check{display:flex;align-items:center;gap:7px;font-size:.875rem;color:#3d5260;cursor:pointer}.check input{width:16px;height:16px;margin:0;accent-color:var(--accent)}.options{display:flex;gap:18px;flex-wrap:wrap}.shortcut{font-size:.8125rem;color:var(--muted);white-space:nowrap}
+    .workbench{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 9px 9px;overflow:hidden;box-shadow:0 6px 22px #152d3d04}.editors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.editor{min-width:0}.editor+.editor{border-left:1px solid var(--line)}.editor-heading{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;gap:10px;border-bottom:1px solid #e4ebef;background:#fbfcfd}.editor-label{display:flex;align-items:center;gap:9px;font-size:.9375rem;font-weight:650}.version-tag{height:24px;min-width:24px;border-radius:5px;display:grid;place-items:center;font:.8125rem var(--mono);border:1px solid #d8e2e8;color:#5a6d7b;background:#fff}.meta{font-size:.8125rem;color:#637583;white-space:nowrap}.editor-body{padding:21px 22px 10px;position:relative}.editor-body:focus-within{box-shadow:inset 0 3px 0 #0d5753}.editor textarea{resize:vertical;width:100%;min-height:290px;height:43vh;max-height:70vh;padding:0;border:0;background:white;color:#1e3443;font:1rem/1.85 var(--mono);tab-size:4;display:block;outline:none;overflow-wrap:anywhere}.editor textarea:focus-visible{outline:none}.editor textarea::placeholder{color:#82939e;opacity:1}.editor-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;border-top:1px solid #e8eef2;color:var(--muted);font-size:.8125rem}.compare-actions{padding:18px 20px;border-top:1px solid var(--line);background:#fbfcfd;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.hint{font-size:.875rem;color:var(--muted);margin:0}.hint strong{font-weight:600;color:#3d5260}
+    .results-head{padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}.results-title{display:flex;gap:13px;align-items:center;flex-wrap:wrap}.results-title h2{margin:0;font-size:1rem;letter-spacing:-.015em}.stats{display:flex;align-items:center;gap:8px;font-size:.8125rem}.stat{border-radius:5px;padding:3px 8px;font-weight:550}.stat.removed{color:var(--red);background:#fff0f2}.stat.added{color:var(--green);background:#e7f7ef}.results-actions{display:flex;align-items:center;gap:8px}.change-nav{display:flex;align-items:center;gap:5px;border-right:1px solid var(--line);padding-right:11px;margin-right:3px}.change-counter{font-size:.8125rem;color:var(--muted);min-width:45px;text-align:center;font-variant-numeric:tabular-nums}.column-titles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);background:#f8fafb;border-bottom:1px solid var(--line)}.column-title{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:600;padding:12px 18px}.column-title+.column-title{border-left:1px solid var(--line)}.column-title .version-tag{background:#fff}.diff-scroll{overflow:auto;max-height:61vh;min-height:280px;overscroll-behavior:contain;scrollbar-gutter:stable}.diff-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);position:relative;scroll-margin:35px}.diff-row.current{outline:2px solid #17837d;outline-offset:-2px;z-index:1}.diff-cell{display:flex;min-width:0;align-items:stretch;line-height:1.8;min-height:34px;font-family:var(--mono);font-size:.9375rem;border-bottom:1px solid #f0f3f6}.diff-cell+.diff-cell{border-left:1px solid var(--line)}.line-number{min-width:3.25rem;flex:none;text-align:right;padding:5px 8px 5px 4px;color:#647684;background:#f7f9fb;border-right:1px solid #e9eef2;font-size:.8125rem;user-select:none}.line-sign{width:1.5rem;flex:none;text-align:center;padding-top:4px;user-select:none;font-weight:600}.line-content{margin:0;padding:4px 14px 4px 0;min-width:0;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;font:inherit;flex:1}.diff-cell.remove{background:#fff0f2;color:#78253a}.diff-cell.add{background:#eaf8f0;color:#17533e}.diff-cell.remove .line-number{background:#fde5e9;color:#953249;border-color:#f4d4db}.diff-cell.add .line-number{background:#ddf1e5;color:#35674d;border-color:#cce8d7}.diff-cell.remove .line-sign{color:#a52c45}.diff-cell.add .line-sign{color:#187251}.diff-cell.gap{background:repeating-linear-gradient(135deg,#f4f7f9,#f4f7f9 4px,#edf2f5 4px,#edf2f5 5px)}.diff-cell.gap .line-number{background:transparent;border-right-color:#e2e9ef;color:transparent}.diff-cell mark{color:inherit;border-radius:2px;background:transparent;padding:1px 0;box-decoration-break:clone;-webkit-box-decoration-break:clone}.diff-cell.remove mark{background:#f7bcc8;text-decoration:underline;text-decoration-color:#bc5a70;text-underline-offset:3px}.diff-cell.add mark{background:#aee4c6;text-decoration:underline;text-decoration-color:#4e9771;text-underline-offset:3px}.empty-line:after{content:"↵";color:#7b8d99}.diff-cell.remove .empty-line:after{color:#ac4259}.diff-cell.add .empty-line:after{color:#2d7b58}.result-footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 20px;border-top:1px solid var(--line);font-size:.8125rem;color:var(--muted)}.legend{display:flex;gap:18px;flex-wrap:wrap}.legend-item{display:flex;align-items:center;gap:6px}.legend-mark{font-family:var(--mono);display:inline-grid;place-items:center;width:19px;height:19px;border-radius:3px}.legend-mark.minus{color:var(--red);background:#fce0e6}.legend-mark.plus{color:var(--green);background:#d6efdf}.note{padding:11px 20px;border-bottom:1px solid #eadbab;background:#fffae9;color:#695222;font-size:.875rem}.message{margin:0 0 15px;border:1px solid #e4b1bc;border-radius:7px;background:#fff1f3;color:#8e233a;padding:12px 16px;font-size:.9375rem}.success{color:var(--green)}.footnote{margin:18px 0 0;font-size:.8125rem;color:#627583;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.busy{cursor:progress}.busy button{pointer-events:none}
+    @media(min-width:1500px){main{padding-top:44px}.editor textarea{height:44vh}}
+    @media(max-width:1000px){.topbar-inner{padding:0 24px}main{padding:28px 24px}.page-heading{flex-wrap:wrap;gap:16px}.settings-left{gap:14px}.shortcut{display:none}.editor-heading{padding:14px}.meta{font-size:.75rem}.editor-body{padding:16px 15px 8px}.editor-bottom{padding:11px 14px}.line-number{min-width:2.5rem}}
+    @media(max-width:680px){.topbar{height:65px}.topbar-inner{padding:0 16px}.privacy{font-size:.8125rem}.privacy .privacy-extra{display:none}main{padding:24px 14px 18px}h1{font-size:1.65rem}.page-heading{margin-bottom:20px;gap:12px}.utility{gap:0}.utility .btn{padding:8px 9px}.settings{padding:12px}.settings-left{gap:12px}.options{gap:12px}.check{font-size:.8125rem}.editors{grid-template-columns:minmax(0,1fr)}.editor+.editor{border-left:0;border-top:1px solid var(--line)}.editor textarea{height:210px;min-height:180px;font-size:.9375rem}.editor-heading{padding:12px 14px}.editor-body{padding:15px}.editor-bottom{padding:9px 14px}.compare-actions{padding:14px}.compare-actions .btn.primary{width:100%}.hint{font-size:.8125rem}.results-head{padding:14px}.results-actions{flex-wrap:wrap}.column-title{padding:10px;font-size:.8125rem}.diff-cell{font-size:.875rem}.line-number{min-width:1.65rem;padding-right:4px;font-size:.75rem}.line-sign{width:1rem}.line-content{padding-right:6px}.diff-scroll{max-height:65vh}.result-footer{padding:12px 14px}.footnote{font-size:.75rem}.brand{font-size:1rem}.brand-icon{width:32px;height:32px}.stat{font-size:.75rem}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+    @media print{body{background:white}.topbar,.page-heading,.settings,.results-actions,.footnote,.compare-actions,.utility{display:none!important}main{padding:0;max-width:none}.diff-scroll{max-height:none;overflow:visible}.workbench{border:1px solid #ccc;box-shadow:none}.diff-row{break-inside:avoid}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="topbar-inner">
+    <div class="brand"><div class="brand-icon" aria-hidden="true"><span>±</span></div>Testo a testo</div>
+    <div class="privacy"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg><span>Solo nel tuo browser<span class="privacy-extra"> · anche offline</span></span></div>
+  </div></header>
+  <main>
+    <div class="page-heading">
+      <div><h1>Confronta due testi</h1><p class="intro">Incolla le due versioni e trova le differenze.</p></div>
+      <div class="utility">
+        <button class="btn quiet" id="example" type="button">Prova un esempio</button>
+        <button class="btn quiet" id="swap" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h15m-4-4 4 4-4 4M20 17H5m4-4-4 4 4 4"/></svg>Scambia</button>
+        <button class="btn quiet" id="clear" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>Svuota</button>
+        <button class="btn quiet" id="undo-clear" type="button" hidden>Annulla svuotamento</button>
+      </div>
+    </div>
+    <p class="message" id="error" role="alert" hidden></p>
+    <div class="settings" id="settings">
+      <div class="settings-left">
+        <fieldset class="detail"><legend>Dettaglio</legend><div class="segmented">
+          <label><input type="radio" name="detail" value="words" checked><span>Parole</span></label>
+          <label><input type="radio" name="detail" value="characters"><span>Caratteri</span></label>
+        </div></fieldset>
+        <div class="options">
+          <label class="check"><input type="checkbox" id="ignore-case">Ignora maiuscole</label>
+          <label class="check" title="Considera equivalenti sequenze di spazi e tabulazioni nella stessa posizione. Gli a capo restano significativi."><input type="checkbox" id="ignore-spaces">Ignora spazi ripetuti</label>
+        </div>
+      </div>
+      <span class="shortcut" id="shortcut">Confronta con Ctrl + Invio</span>
+    </div>
+    <div class="workbench" id="workbench">
+      <section id="input-view" aria-label="Testi da confrontare">
+        <div class="editors">
+          <div class="editor"><div class="editor-heading"><label class="editor-label" for="original"><span class="version-tag" aria-hidden="true">A</span>Testo originale</label><span class="meta" id="original-count">0 caratteri</span></div>
+            <div class="editor-body"><textarea id="original" placeholder="Incolla qui il testo originale…" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="original-count"></textarea></div>
+            <div class="editor-bottom"><span id="original-lines">0 righe</span><span>Versione di partenza</span></div>
+          </div>
+          <div class="editor"><div class="editor-heading"><label class="editor-label" for="modified"><span class="version-tag" aria-hidden="true">B</span>Testo modificato</label><span class="meta" id="modified-count">0 caratteri</span></div>
+            <div class="editor-body"><textarea id="modified" placeholder="Incolla qui la versione da confrontare…" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="modified-count"></textarea></div>
+            <div class="editor-bottom"><span id="modified-lines">0 righe</span><span>Versione da verificare</span></div>
+          </div>
+        </div>
+        <div class="compare-actions"><p class="hint"><strong>Rosso</strong> per le rimozioni, <strong>verde</strong> per le aggiunte.</p><button class="btn primary" id="compare" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v16h4m8-16h4v16h-4M9 8h6m-3-3v6m-3 5h6"/></svg><span id="compare-label">Confronta testi</span></button></div>
+      </section>
+      <section id="result-view" aria-label="Risultato del confronto" hidden>
+        <div class="results-head"><div class="results-title"><h2 id="result-title" tabindex="-1">Differenze</h2><div class="stats" id="stats"><span class="stat removed" id="removed-stat"></span><span class="stat added" id="added-stat"></span></div></div>
+          <div class="results-actions"><div class="change-nav" id="change-nav"><button class="btn icon-only" id="previous" type="button" aria-label="Differenza precedente" title="Differenza precedente"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 14 5-5 5 5"/></svg></button><span class="change-counter" id="change-counter"></span><button class="btn icon-only" id="next" type="button" aria-label="Differenza successiva" title="Differenza successiva"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></button></div><button class="btn small" id="edit" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5M4 20l5-1L21 7a2 2 0 0 0-4-4L5 15z"/></svg>Modifica testi</button></div>
+        </div>
+        <p class="note" id="precision-note" hidden>Alcuni blocchi molto diversi sono evidenziati per intero per mantenere rapido il confronto. Il testo è comunque mostrato integralmente.</p>
+        <div class="column-titles"><div class="column-title"><span class="version-tag" aria-hidden="true">A</span>Testo originale</div><div class="column-title"><span class="version-tag" aria-hidden="true">B</span>Testo modificato</div></div>
+        <div class="diff-scroll" id="diff-scroll" tabindex="0" role="region" aria-label="Testi affiancati con differenze evidenziate"><div id="diff-rows"></div></div>
+        <div class="result-footer"><div class="legend"><span class="legend-item"><span class="legend-mark minus" aria-hidden="true">−</span>Rimosso dall’originale</span><span class="legend-item"><span class="legend-mark plus" aria-hidden="true">+</span>Aggiunto nella nuova versione</span></div><span id="result-detail"></span></div>
+      </section>
+    </div>
+    <div class="footnote"><span>L’app non invia né salva i testi. Restano nella memoria di questa scheda.</span><span>Nessun account. Nessuna connessione necessaria.</span></div>
+    <div class="sr-only" id="status" role="status" aria-live="polite" aria-atomic="true"></div>
+    <noscript><p class="message">Attiva JavaScript nel browser per confrontare i testi. Non è necessaria una connessione a internet.</p></noscript>
+  </main>
+  <script id="diff-engine">
+  // Deterministic Myers diff. No network requests, dependencies or AI services.
+  // Kept separate from the interface so the shipped file itself can be tested.
+  (() => {
+    "use strict";
+    const MAX_CHARACTERS = 300000;
+    const MAX_LINES = 10000;
+    const graphemes = typeof Intl.Segmenter === "function"
+      ? new Intl.Segmenter("it", { granularity: "grapheme" }) : null;
+    const normalizeNewlines = text => text.replace(/\r\n?/g, "\n");
+    const splitLines = text => text === "" ? [] : text.split("\n");
+    function key(text, options) {
+      let value = text;
+      if (options.ignoreSpaces) value = value.replace(/[^\S\n]+/gu, " ");
+      if (options.ignoreCase) value = value.toLowerCase();
+      return value;
+    }
+    function append(runs, type, left, right) {
+      let last = runs[runs.length - 1];
+      if (!last || last.type !== type) {
+        last = { type, left: [], right: [] };
+        runs.push(last);
+      }
+      for (const item of left) last.left.push(item);
+      for (const item of right) last.right.push(item);
+    }
+    function sequenceDiff(left, right, getKey, budget) {
+      const a = left.map(getKey), b = right.map(getKey);
+      let head = 0, tail = 0;
+      while (head < a.length && head < b.length && a[head] === b[head]) head++;
+      while (tail < a.length - head && tail < b.length - head &&
+             a[a.length - tail - 1] === b[b.length - tail - 1]) tail++;
+      const endA = a.length - tail, endB = b.length - tail;
+      const n = endA - head, m = endB - head;
+      const runs = [];
+      if (head) append(runs, "equal", left.slice(0, head), right.slice(0, head));
+      const finish = () => {
+        if (tail) append(runs, "equal", left.slice(endA), right.slice(endB));
+        return runs;
+      };
+      const replaceMiddle = () => {
+        if (n) append(runs, "remove", left.slice(head, endA), []);
+        if (m) append(runs, "add", [], right.slice(head, endB));
+        return finish();
+      };
+      if (!n || !m) return replaceMiddle();
+      const keys = new Set(a.slice(head, endA));
+      let intersects = false;
+      for (let i = head; i < endB; i++) {
+        if (keys.has(b[i])) { intersects = true; break; }
+      }
+      if (!intersects) return replaceMiddle();
+      const v = new Map([[1, 0]]), trace = [];
+      let cells = 0, solved = false;
+      outer: for (let depth = 0; depth <= n + m; depth++) {
+        cells += v.size;
+        if (cells > 250000 || budget.remaining <= 0 || Date.now() > budget.deadline) {
+          budget.coarse = true;
+          return replaceMiddle();
+        }
+        trace.push(new Map(v));
+        for (let diagonal = -depth; diagonal <= depth; diagonal += 2) {
+          const down = diagonal === -depth || (diagonal !== depth &&
+            (v.get(diagonal - 1) ?? -Infinity) < (v.get(diagonal + 1) ?? -Infinity));
+          let x = down ? (v.get(diagonal + 1) ?? 0) : (v.get(diagonal - 1) ?? 0) + 1;
+          let y = x - diagonal;
+          budget.remaining--;
+          while (x < n && y < m && a[head + x] === b[head + y]) {
+            x++; y++; budget.remaining--;
+          }
+          v.set(diagonal, x);
+          if (x >= n && y >= m) { solved = true; break outer; }
+        }
+      }
+      if (!solved) { budget.coarse = true; return replaceMiddle(); }
+      let x = n, y = m;
+      const steps = [];
+      for (let depth = trace.length - 1; depth >= 0; depth--) {
+        const previous = trace[depth], diagonal = x - y;
+        const down = diagonal === -depth || (diagonal !== depth &&
+          (previous.get(diagonal - 1) ?? -Infinity) < (previous.get(diagonal + 1) ?? -Infinity));
+        const previousDiagonal = down ? diagonal + 1 : diagonal - 1;
+        const previousX = previous.get(previousDiagonal) ?? 0;
+        const previousY = previousX - previousDiagonal;
+        while (x > previousX && y > previousY) { steps.push("equal"); x--; y--; }
+        if (depth === 0) break;
+        if (x === previousX) { steps.push("add"); y--; }
+        else { steps.push("remove"); x--; }
+      }
+      steps.reverse();
+      let ai = head, bi = head;
+      for (const type of steps) {
+        if (type === "equal") append(runs, type, [left[ai++]], [right[bi++]]);
+        else if (type === "remove") append(runs, type, [left[ai++]], []);
+        else append(runs, type, [], [right[bi++]]);
+      }
+      return finish();
+    }
+    function tokenize(text, options) {
+      if (options.detail !== "characters") {
+        return text.match(/[\p{L}\p{N}\p{M}_]+(?:[’'][\p{L}\p{N}\p{M}_]+)*|[^\S\n]+|[^\s]/gu) || [];
+      }
+      const parts = graphemes ? Array.from(graphemes.segment(text), part => part.segment) : Array.from(text);
+      if (!options.ignoreSpaces) return parts;
+      const combined = [];
+      let whitespace = false;
+      for (const part of parts) {
+        const isWhitespace = /^[^\S\n]+$/u.test(part);
+        if (whitespace && isWhitespace) combined[combined.length - 1] += part;
+        else combined.push(part);
+        whitespace = isWhitespace;
+      }
+      return combined;
+    }
+    function inlineDiff(left, right, options, budget) {
+      const runs = sequenceDiff(tokenize(left, options), tokenize(right, options), item => key(item, options), budget);
+      return {
+        left: runs.filter(run => run.left.length).map(run => ({ changed: run.type !== "equal", text: run.left.join("") })),
+        right: runs.filter(run => run.right.length).map(run => ({ changed: run.type !== "equal", text: run.right.join("") }))
+      };
+    }
+    function bigrams(text) {
+      const counts = new Map();
+      for (let i = 0; i < text.length - 1; i++) {
+        const pair = text.slice(i, i + 2);
+        counts.set(pair, (counts.get(pair) || 0) + 1);
+      }
+      return counts;
+    }
+    // Align similar edited lines within each changed block. This only controls
+    // placement: every source line and every character is always retained.
+    function alignLines(left, right, budget) {
+      const zipped = () => Array.from({ length: Math.max(left.length, right.length) }, (_, i) => [left[i] || null, right[i] || null]);
+      if (!left.length || !right.length || left.length * right.length > 4096 ||
+          left.concat(right).reduce((sum, line) => sum + line.text.length, 0) > 50000 ||
+          Date.now() > budget.deadline) return zipped();
+      const leftPairs = left.map(line => bigrams(line.key));
+      const rightPairs = right.map(line => bigrams(line.key));
+      const width = right.length + 1;
+      const costs = new Float64Array((left.length + 1) * width);
+      const directions = new Uint8Array(costs.length);
+      for (let i = 1; i <= left.length; i++) { costs[i * width] = i; directions[i * width] = 1; }
+      for (let j = 1; j <= right.length; j++) { costs[j] = j; directions[j] = 2; }
+      for (let i = 1; i <= left.length; i++) {
+        for (let j = 1; j <= right.length; j++) {
+          let similarity = 0;
+          const a = left[i - 1].key, b = right[j - 1].key;
+          if (a === b) similarity = 1;
+          else if (a.length > 1 && b.length > 1) {
+            let intersection = 0;
+            for (const [pair, count] of leftPairs[i - 1]) intersection += Math.min(count, rightPairs[j - 1].get(pair) || 0);
+            similarity = (2 * intersection) / (a.length + b.length - 2);
+          }
+          const replace = costs[(i - 1) * width + j - 1] + 2.05 - 1.7 * similarity;
+          const remove = costs[(i - 1) * width + j] + 1;
+          const add = costs[i * width + j - 1] + 1;
+          const index = i * width + j;
+          if (replace <= remove && replace <= add) { costs[index] = replace; directions[index] = 0; }
+          else if (remove < add) { costs[index] = remove; directions[index] = 1; }
+          else { costs[index] = add; directions[index] = 2; }
+        }
+      }
+      const rows = [];
+      let i = left.length, j = right.length;
+      while (i || j) {
+        const direction = directions[i * width + j];
+        if (i && j && direction === 0) rows.push([left[--i], right[--j]]);
+        else if (i && (direction === 1 || !j)) rows.push([left[--i], null]);
+        else rows.push([null, right[--j]]);
+      }
+      return rows.reverse();
+    }
+    function compare(original, modified, settings = {}) {
+      if (typeof original !== "string" || typeof modified !== "string") throw new TypeError("I testi devono essere stringhe.");
+      if (original.length > MAX_CHARACTERS || modified.length > MAX_CHARACTERS) {
+        throw new RangeError("Per mantenere il confronto reattivo, usa al massimo 300.000 caratteri per testo. Puoi confrontare il documento in più parti.");
+      }
+      const options = { detail: "words", ignoreCase: false, ignoreSpaces: false, ...settings };
+      const leftText = normalizeNewlines(original), rightText = normalizeNewlines(modified);
+      const lines = text => splitLines(text).map((text, index) => ({ number: index + 1, text, key: key(text, options) }));
+      const left = lines(leftText), right = lines(rightText);
+      if (left.length > MAX_LINES || right.length > MAX_LINES) {
+        throw new RangeError("Usa al massimo 10.000 righe per testo. Suddividi il documento per confrontarlo senza rallentamenti.");
+      }
+      const budget = { remaining: 3000000, deadline: Date.now() + 1500, coarse: false };
+      const runs = sequenceDiff(left, right, line => line.key, budget);
+      const rows = [];
+      let removed = 0, added = 0, blocks = 0;
+      for (let i = 0; i < runs.length; i++) {
+        const run = runs[i];
+        if (run.type === "equal") {
+          for (let j = 0; j < run.left.length; j++) rows.push({ left: run.left[j], right: run.right[j], changed: false, block: 0 });
+          continue;
+        }
+        const oldLines = [], newLines = [];
+        while (i < runs.length && runs[i].type !== "equal") {
+          for (const line of runs[i].left) oldLines.push(line);
+          for (const line of runs[i].right) newLines.push(line);
+          i++;
+        }
+        i--;
+        removed += oldLines.length; added += newLines.length; blocks++;
+        for (const [oldLine, newLine] of alignLines(oldLines, newLines, budget)) {
+          const row = { left: oldLine, right: newLine, changed: true, block: blocks };
+          if (oldLine && newLine) {
+            const inline = inlineDiff(oldLine.text, newLine.text, options, budget);
+            row.left = { ...oldLine, segments: inline.left };
+            row.right = { ...newLine, segments: inline.right };
+          }
+          rows.push(row);
+        }
+      }
+      return { rows, removed, added, blocks, coarse: budget.coarse,
+        identical: leftText === rightText, equivalent: blocks === 0,
+        normalizedNewlines: original !== leftText || modified !== rightText, options };
+    }
+    globalThis.TextDiff = Object.freeze({ compare, sequenceDiff, tokenize, normalizeNewlines, splitLines, MAX_CHARACTERS, MAX_LINES });
+  })();
+  </script>
+  <script id="app">
+  (() => {
+    "use strict";
+    const $ = id => document.getElementById(id);
+    const original = $("original"), modified = $("modified");
+    const state = { view: "input", busy: false, result: null, current: 0, undo: null };
+    const format = number => number.toLocaleString("it-IT");
+    const nextFrame = () => new Promise(resolve => requestAnimationFrame(resolve));
+    const options = () => ({
+      detail: document.querySelector('input[name="detail"]:checked').value,
+      ignoreCase: $("ignore-case").checked,
+      ignoreSpaces: $("ignore-spaces").checked
+    });
+    function announce(message) { $("status").textContent = message; }
+    function clearError() { $("error").hidden = true; $("error").textContent = ""; }
+    function showError(message) { $("error").textContent = message; $("error").hidden = false; }
+    function updateControls() {
+      const hasText = original.value.length > 0 || modified.value.length > 0;
+      for (const control of document.querySelectorAll("button, .settings input")) control.disabled = state.busy;
+      $("swap").disabled = state.busy || !hasText;
+      $("clear").disabled = state.busy || !hasText;
+      $("compare").disabled = state.busy || !hasText;
+      $("previous").disabled = $("next").disabled = state.busy || !state.result || state.result.blocks < 2;
+      $("example").hidden = hasText;
+      $("undo-clear").hidden = !state.undo;
+      original.readOnly = modified.readOnly = state.busy;
+      $("compare-label").textContent = state.busy ? "Confronto in corso…" : "Confronta testi";
+      $("workbench").setAttribute("aria-busy", String(state.busy));
+      document.body.classList.toggle("busy", state.busy);
+    }
+    function updateMetadata() {
+      for (const [id, field] of [["original", original], ["modified", modified]]) {
+        const characters = field.value.length;
+        const count = TextDiff.splitLines(TextDiff.normalizeNewlines(field.value)).length;
+        $(id + "-count").textContent = format(characters) + (characters === 1 ? " carattere" : " caratteri");
+        $(id + "-lines").textContent = format(count) + (count === 1 ? " riga" : " righe");
+      }
+      updateControls();
+    }
+    function showInputs(focus = true) {
+      state.view = "input";
+      $("input-view").hidden = false;
+      $("result-view").hidden = true;
+      if (focus) original.focus();
+    }
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+    function makeCell(line, side, changed) {
+      const cell = element("div", "diff-cell" + (!line ? " gap" : changed ? (side === "left" ? " remove" : " add") : ""));
+      const version = side === "left" ? "Originale" : "Modificato";
+      const number = element("span", "line-number", line ? String(line.number) : "");
+      number.setAttribute("aria-hidden", "true");
+      cell.append(number);
+      if (!line) { cell.setAttribute("aria-label", "Nessuna riga nel testo " + version.toLowerCase()); return cell; }
+      const sign = element("span", "line-sign", changed ? (side === "left" ? "−" : "+") : "");
+      sign.setAttribute("aria-hidden", "true");
+      const spoken = element("span", "sr-only", version + ", riga " + line.number + (changed ? (side === "left" ? ", rimozione: " : ", aggiunta: ") : ": "));
+      const content = element("pre", "line-content");
+      if (line.text === "") {
+        const empty = element("span", "empty-line");
+        empty.setAttribute("aria-label", "Riga vuota");
+        empty.title = "Riga vuota / a capo";
+        content.append(empty);
+      } else if (line.segments) {
+        for (const segment of line.segments) content.append(element(segment.changed ? "mark" : "span", "", segment.text));
+      } else {
+        content.append(element(changed ? "mark" : "span", "", line.text));
+      }
+      cell.append(spoken, sign, content);
+      return cell;
+    }
+    async function renderResult(result) {
+      const container = $("diff-rows");
+      container.replaceChildren();
+      let lastBlock = 0;
+      for (let offset = 0; offset < result.rows.length; offset += 150) {
+        const fragment = document.createDocumentFragment();
+        for (const row of result.rows.slice(offset, offset + 150)) {
+          const node = element("div", "diff-row");
+          if (row.block && row.block !== lastBlock) { node.id = "change-" + row.block; lastBlock = row.block; }
+          node.append(makeCell(row.left, "left", row.changed), makeCell(row.right, "right", row.changed));
+          fragment.append(node);
+        }
+        container.append(fragment);
+        if (offset + 150 < result.rows.length) await nextFrame();
+      }
+      const title = result.blocks
+        ? format(result.blocks) + (result.blocks === 1 ? " blocco di differenze" : " blocchi di differenze")
+        : result.identical ? "Nessuna differenza" : "Testi equivalenti con queste opzioni";
+      $("result-title").textContent = title;
+      $("result-title").classList.toggle("success", !result.blocks);
+      $("stats").hidden = !result.blocks;
+      $("removed-stat").textContent = "− " + format(result.removed) + (result.removed === 1 ? " riga" : " righe");
+      $("added-stat").textContent = "+ " + format(result.added) + (result.added === 1 ? " riga" : " righe");
+      $("precision-note").hidden = !result.coarse;
+      $("precision-note").style.margin = "0";
+      $("change-nav").hidden = !result.blocks;
+      const detail = ["Dettaglio: " + (result.options.detail === "characters" ? "caratteri" : "parole")];
+      if (result.options.ignoreCase) detail.push("maiuscole ignorate");
+      if (result.options.ignoreSpaces) detail.push("spazi ripetuti ignorati");
+      if (result.normalizedNewlines) detail.push("formato degli a capo uniformato");
+      $("result-detail").textContent = detail.join(" · ");
+      state.current = 0;
+      $("change-counter").textContent = result.blocks ? "1 / " + format(result.blocks) : "";
+      const first = $("change-1");
+      if (first) first.classList.add("current");
+      state.view = "result";
+      $("input-view").hidden = true;
+      $("result-view").hidden = false;
+      $("diff-scroll").scrollTop = 0;
+      announce(title + (result.blocks ? ". " + result.removed + " righe rimosse, " + result.added + " righe aggiunte." : "."));
+    }
+    async function runComparison(focusResult = true) {
+      if (state.busy) return;
+      clearError();
+      if (!original.value && !modified.value) {
+        showError("Incolla almeno un testo per avviare il confronto.");
+        showInputs();
+        return;
+      }
+      const activeControl = document.activeElement;
+      state.busy = true;
+      updateControls();
+      announce("Confronto in corso.");
+      try {
+        await nextFrame();
+        const result = TextDiff.compare(original.value, modified.value, options());
+        await renderResult(result);
+        state.result = result;
+      } catch (error) {
+        state.result = null;
+        $("diff-rows").replaceChildren();
+        showInputs(false);
+        showError(error instanceof RangeError ? error.message : "Il confronto non è riuscito. Prova a confrontare una porzione più breve dei testi.");
+        announce("Confronto non completato.");
+      } finally {
+        state.busy = false;
+        updateControls();
+        if (state.view === "result" && focusResult) $("result-title").focus({ preventScroll: true });
+        else if (activeControl && !activeControl.closest("[hidden]")) activeControl.focus({ preventScroll: true });
+      }
+    }
+    function jump(direction) {
+      if (!state.result || !state.result.blocks) return;
+      const previous = $("change-" + (state.current + 1));
+      if (previous) previous.classList.remove("current");
+      const count = state.result.blocks;
+      state.current = (state.current + direction + count) % count;
+      const row = $("change-" + (state.current + 1));
+      if (row) {
+        row.classList.add("current");
+        const scroll = $("diff-scroll");
+        const offset = row.getBoundingClientRect().top - scroll.getBoundingClientRect().top + scroll.scrollTop - 28;
+        scroll.scrollTo({ top: Math.max(0, offset), behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+      }
+      $("change-counter").textContent = format(state.current + 1) + " / " + format(count);
+      announce("Blocco di differenze " + (state.current + 1) + " di " + count + ".");
+    }
+    for (const field of [original, modified]) field.addEventListener("input", () => {
+      state.undo = null;
+      state.result = null;
+      clearError();
+      updateMetadata();
+    });
+    $("compare").addEventListener("click", () => runComparison());
+    $("edit").addEventListener("click", () => { clearError(); showInputs(); announce("Puoi modificare i testi e ripetere il confronto."); });
+    $("swap").addEventListener("click", () => {
+      const text = original.value; original.value = modified.value; modified.value = text;
+      state.undo = null;
+      clearError();
+      updateMetadata();
+      if (state.view === "result") runComparison(false);
+      else announce("Testi scambiati.");
+    });
+    $("clear").addEventListener("click", () => {
+      state.undo = [original.value, modified.value];
+      original.value = ""; modified.value = "";
+      state.result = null;
+      $("diff-rows").replaceChildren();
+      showInputs(false);
+      clearError(); updateMetadata();
+      $("undo-clear").focus();
+      announce("Testi svuotati. Puoi annullare lo svuotamento.");
+    });
+    $("undo-clear").addEventListener("click", () => {
+      if (!state.undo) return;
+      [original.value, modified.value] = state.undo;
+      state.undo = null;
+      clearError(); updateMetadata(); original.focus();
+      announce("Testi ripristinati.");
+    });
+    $("example").addEventListener("click", () => {
+      original.value = "Ciao Marta,\n\nla riunione è fissata per martedì alle 10:00.\nIl preventivo include design e sviluppo.\nLa consegna è prevista per il 15 ottobre.\n\nGrazie,\nLuca";
+      modified.value = "Ciao Marta,\n\nla riunione è fissata per giovedì alle 11:30.\nIl preventivo include design, sviluppo e collaudo.\nTi invio anche una proposta aggiornata.\nLa consegna è prevista per il 22 ottobre.\n\nGrazie,\nLuca";
+      state.undo = null;
+      updateMetadata();
+      runComparison();
+    });
+    for (const input of document.querySelectorAll(".settings input")) input.addEventListener("change", () => {
+      if (state.view === "result") runComparison(false);
+    });
+    $("previous").addEventListener("click", () => jump(-1));
+    $("next").addEventListener("click", () => jump(1));
+    document.addEventListener("keydown", event => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") { event.preventDefault(); runComparison(); }
+    });
+    if (/Mac|iPhone|iPad/.test(navigator.platform)) $("shortcut").textContent = "Confronta con ⌘ + Invio";
+    updateMetadata();
+  })();
+  </script>
+</body>
+</html>
